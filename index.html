@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users API</title>
+</head>
+<body>
+
+    <input id="user-count" type="text" placeholder="Input Serial No. of User"> <button class= "button" id="load-user">Load User</button>
+
+    <div class="users" id="users"></div>
+    <div class="user-details" id="user-detail"></div>
+
+    <style>
+        body{
+            width: 400px;
+            margin: auto;
+            padding-top: 30px;
+        }
+        input{
+            padding: 10px;
+            width: 210px;
+            border-radius: 20px;
+            background: rgb(0, 0, 0);
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: rgb(217, 255, 79);
+        }
+        .button{
+            width: 100px;
+            padding: 10px;
+            border-radius: 20px;
+            background: rgb(0, 128, 85);
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+        }
+        .name{
+            margin-left: 10px;
+        }
+        .details{
+            position: relative;
+            margin-left: 10px;
+        }  
+        .user{
+            position: absolute;
+            display: flex;
+            justify-content: end;
+            justify-content: space-between;
+            align-items: center;
+            color: rgb(5, 146, 148);
+            background-color: rgb(255, 254, 186);
+            width: 340px;
+            border-radius: 20px;
+        }
+        .user-details{
+            display: none;
+            margin-top: 100px;
+            background-color: aquamarine;
+            width: 320px;
+            border-radius: 20px;
+            padding: 10px;
+        }
+    </style>
+    
+    <script>
+        document.getElementById('load-user').addEventListener('click', function(){
+            const countText = document.getElementById('user-count').value;
+            const count = parseInt(countText);
+
+            const detail = document.getElementById('user-detail');
+            detail.style.display = "none"
+
+            fetch("https://jsonplaceholder.typicode.com/users")
+            .then(res => res.json())
+            .then(data => {
+                data = data.slice(count-1, count);
+                const userContainer = document.getElementById('users');
+                userContainer.innerHTML = '';
+
+                for (let i = 0; i < data.length; i++) {
+                    const user = data[i];
+                    const p = document.createElement('p');
+                    p.innerHTML = `
+                    <p class="user">  
+                    <span class="name">Name:-<strong>${user.name}</strong></span>  
+                    <button class= "button details" onClick="getUserDetail(${user.id})">Details</button>
+                    </p>
+                    `;
+                    userContainer.appendChild(p);
+            }
+        })
+            
+        })
+
+
+        function getUserDetail(userID){
+            fetch(`https://jsonplaceholder.typicode.com/users/${userID}`)
+            .then(res => res.json())
+            .then(data => {
+                const detail = document.getElementById('user-detail');
+                detail.style.display = "block"
+                detail.innerHTML = `
+                <h3>Name: ${data.name} </h3>
+                <h4>Email: ${data.email} </h4>
+                <h4>Phone: ${data.phone} </h4>
+                `
+            })
+            
+        }
+    </script>
+
+</body>
+</html>
